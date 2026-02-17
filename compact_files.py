@@ -2,12 +2,12 @@ import os
 import tarfile
 import pathlib
 import logging
+import argparse
 from datetime import datetime
 
 # =================================================================
 # CONFIGURACIÓN
 # =================================================================
-PATRON_DIR = "20260215"      # Carpeta objetivo
 
 # Patrones múltiples: lista de tuplas (patrón_archivos, nombre_tar)
 # Cada tupla contiene: (patrón_glob, prefijo_para_tar_gz)
@@ -38,12 +38,13 @@ def formatear_tamano(bytes_size):
             return f"{bytes_size:.2f} {unit}"
         bytes_size /= 1024
 
-def ejecutar_limpieza():
+
+def ejecutar_limpieza(patron_dir):
     base_path = pathlib.Path(RUTA_BASE)
-    directorios = [d for d in base_path.glob(PATRON_DIR) if d.is_dir()]
+    directorios = [d for d in base_path.glob(patron_dir) if d.is_dir()]
     
     if not directorios:
-        print(f"No se encontraron carpetas con el patrón: {PATRON_DIR}")
+        print(f"No se encontraron carpetas con el patrón: {patron_dir}")
         return
 
     total_liberado = 0
@@ -98,4 +99,11 @@ def ejecutar_limpieza():
     logging.info(resumen)
 
 if __name__ == "__main__":
-    ejecutar_limpieza()
+    parser = argparse.ArgumentParser(description='Comprime archivos en carpetas específicas.')
+    parser.add_argument('patron_dir', 
+                        help='Patrón de carpeta objetivo (ej: 20260215 o 2026*)',
+                        default='20260215',
+                        nargs='?')
+    
+    args = parser.parse_args()
+    ejecutar_limpieza(args.patron_dir)
