@@ -6,24 +6,24 @@ import argparse
 from datetime import datetime
 
 # =================================================================
-# CONFIGURACIÓN
+# CONFIGURATION
 # =================================================================
 
-# Patrones múltiples: lista de tuplas (patrón_archivos, nombre_tar)
-# Cada tupla contiene: (patrón_glob, prefijo_para_tar_gz)
-PATRONES_ARCHIVOS = [
+# Multiple patterns: list of tuples (file_pattern, tar_name)
+# Each tuple contains: (glob_pattern, prefix_for_tar_gz)
+FILE_PATTERNS = [
     ("g*.log", "GainSel_log"),
     ("e*.log", "ErrorLog"),
     ("s*.dat", "SensorData"),
-    # Añade más patrones según necesites
+    # Add more patterns as needed
 ]
 
-RUTA_BASE = "."              # Directorio de inicio
-SIMULACION = False           # CAMBIAR A False PARA BORRAR DE VERDAD
-LOG_FILE = "registro_limpieza.log"
+BASE_PATH = "."              # Starting directory
+SIMULATION = False           # CHANGE TO False TO DELETE FOR REAL
+LOG_FILE = "cleanup_log.log"
 # =================================================================
 
-# Configuración del sistema de logs
+# Log system configuration
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
@@ -31,79 +31,79 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-def formatear_tamano(bytes_size):
-    """Hace que los bytes sean legibles para humanos."""
+def format_size(bytes_size):
+    """Makes bytes human-readable."""
     for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
         if bytes_size < 1024:
             return f"{bytes_size:.2f} {unit}"
         bytes_size /= 1024
 
 
-def ejecutar_limpieza(patron_dir):
-    base_path = pathlib.Path(RUTA_BASE)
-    directorios = [d for d in base_path.glob(patron_dir) if d.is_dir()]
+def run_cleanup(dir_pattern):
+    base_path = pathlib.Path(BASE_PATH)
+    directories = [d for d in base_path.glob(dir_pattern) if d.is_dir()]
     
-    if not directorios:
-        print(f"No se encontraron carpetas con el patrón: {patron_dir}")
+    if not directories:
+        print(f"No folders found with pattern: {dir_pattern}")
         return
 
-    total_liberado = 0
-    print(f"🚀 Modo {'SIMULACIÓN' if SIMULACION else 'REAL'} activo")
-    print(f"📝 Log: {LOG_FILE} | Compresión: GZIP")
-    print(f"📋 Patrones configurados: {len(PATRONES_ARCHIVOS)}")
+    total_freed = 0
+    print(f"🚀 {'SIMULATION' if SIMULATION else 'REAL'} mode active")
+    print(f"📝 Log: {LOG_FILE} | Compression: GZIP")
+    print(f"📋 Configured patterns: {len(FILE_PATTERNS)}")
     print("-" * 60)
-    logging.info(f"--- NUEVA SESIÓN (Simulación: {SIMULACION}) ---")
+    logging.info(f"--- NEW SESSION (Simulation: {SIMULATION}) ---")
 
-    for carpeta in directorios:
-        print(f"📁 Directorio: {carpeta.name}")
+    for folder in directories:
+        print(f"📁 Directory: {folder.name}")
         
-        for patron_archivo, nombre_prefix in PATRONES_ARCHIVOS:
-            archivos = list(carpeta.glob(patron_archivo))
+        for file_pattern, name_prefix in FILE_PATTERNS:
+            files = list(folder.glob(file_pattern))
             
-            if not archivos:
+            if not files:
                 continue
 
-            # Definimos el nombre del archivo comprimido
-            nombre_comprimido = carpeta / f"{carpeta.name}_{nombre_prefix}.tar.gz"
-            peso_actual = sum(f.stat().st_size for f in archivos)
+            # Define the compressed file name
+            compressed_name = folder / f"{folder.name}_{name_prefix}.tar.gz"
+            current_size = sum(f.stat().st_size for f in files)
             
-            print(f"  └─ Patrón '{patron_archivo}' | {len(archivos)} archivos | {formatear_tamano(peso_actual)}")
+            print(f"  └─ Pattern '{file_pattern}' | {len(files)} files | {format_size(current_size)}")
 
-            if SIMULACION:
-                logging.info(f"[SIM] Se procesarían {len(archivos)} archivos ({patron_archivo}) en {carpeta.name}")
-                print(f"     [SIM] Se crearía {nombre_comprimido.name}")
+            if SIMULATION:
+                logging.info(f"[SIM] Would process {len(files)} files ({file_pattern}) in {folder.name}")
+                print(f"     [SIM] Would create {compressed_name.name}")
             else:
                 try:
-                    # 'w:gz' para crear un archivo comprimido Gzip
-                    with tarfile.open(nombre_comprimido, "w:gz") as tar:
-                        for f in archivos:
+                    # 'w:gz' to create a Gzip compressed file
+                    with tarfile.open(compressed_name, "w:gz") as tar:
+                        for f in files:
                             tar.add(f, arcname=f.name)
                     
-                    # Borrado de seguridad: solo ocurre si el tar se cerró bien
-                    for f in archivos:
+                    # Safe deletion: only happens if tar closed properly
+                    for f in files:
                         f.unlink()
                     
-                    total_liberado += peso_actual
-                    print(f"     ✅ Comprimido y liberado.")
-                    logging.info(f"ÉXITO: {carpeta.name} ({patron_archivo}) comprimida. {len(archivos)} archivos eliminados.")
+                    total_freed += current_size
+                    print(f"     ✅ Compressed and freed.")
+                    logging.info(f"SUCCESS: {folder.name} ({file_pattern}) compressed. {len(files)} files deleted.")
                     
                 except Exception as e:
-                    error_msg = f"ERROR en {carpeta.name} ({patron_archivo}): {str(e)}"
+                    error_msg = f"ERROR in {folder.name} ({file_pattern}): {str(e)}"
                     print(f"     ❌ {error_msg}")
                     logging.error(error_msg)
         
         print("-" * 60)
 
-    resumen = f"TERMINADO. Espacio total recuperado: {formatear_tamano(total_liberado)}"
-    print(resumen)
-    logging.info(resumen)
+    summary = f"FINISHED. Total space recovered: {format_size(total_freed)}"
+    print(summary)
+    logging.info(summary)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Comprime archivos en carpetas específicas.')
-    parser.add_argument('patron_dir', 
-                        help='Patrón de carpeta objetivo (ej: 20260215 o 2026*)',
+    parser = argparse.ArgumentParser(description='Compress files in specific folders.')
+    parser.add_argument('dir_pattern', 
+                        help='Target folder pattern (e.g.: 20260215 or 2026*)',
                         default='20260215',
                         nargs='?')
     
     args = parser.parse_args()
-    ejecutar_limpieza(args.patron_dir)
+    run_cleanup(args.dir_pattern)
