@@ -1,13 +1,12 @@
 import pathlib
-import shutil
 import tarfile
 
-SIMULATION = True  # 🔴 cambiar a False cuando estés seguro
+SIMULATION = False  # 🔴 cambiar a False cuando estés seguro
 
 # =========================
 # PATHS
 # =========================
-RUNNING_PATH = pathlib.Path("running_an_comp/v0.11")
+RUNNING_PATH = pathlib.Path("running_an_comp/20250702/v0.11")
 GAINSEL_PATH = pathlib.Path("GainSelec_comp")
 
 
@@ -60,37 +59,34 @@ def compress_running_logs():
 
 
 # =========================
-# 2. RUNNING ANALYSIS (HISTORY)
+# 2. RUNNING ANALYSIS (HISTORY) → SIMPLE
 # =========================
-def compress_history_direct():
+def compress_all_history():
     files = list(RUNNING_PATH.glob("*.history"))
+    tar_name = RUNNING_PATH / "all_history.tar.gz"
 
-    grouped = {}
+    print(f"[RUNNING] {len(files)} history files")
 
-    for f in files:
-        key = f.name.split(".")[0]
-        grouped.setdefault(key, []).append(f)
+    if not files:
+        return
 
-    for key, group_files in grouped.items():
-        tar_name = RUNNING_PATH / f"{key}.tar.gz"
+    print(f"[RUNNING] Compressing all history → {tar_name.name}")
 
-        print(f"[RUNNING] Compressing history {key} ({len(group_files)} files)")
+    if SIMULATION:
+        return
 
-        if SIMULATION:
-            continue
+    try:
+        with tarfile.open(tar_name, "w:gz") as tar:
+            for f in files:
+                tar.add(f, arcname=f.name)
 
-        try:
-            with tarfile.open(tar_name, "w:gz") as tar:
-                for f in group_files:
-                    tar.add(f, arcname=f.name)
+        for f in files:
+            f.unlink()
 
-            for f in group_files:
-                f.unlink()
+        print("     ✅ all history compressed")
 
-            print("     ✅ history compressed")
-
-        except Exception as e:
-            print(f"     ❌ ERROR: {e}")
+    except Exception as e:
+        print(f"     ❌ ERROR: {e}")
 
 
 # =========================
@@ -148,7 +144,7 @@ def main():
 
     print("\n🔹 RUNNING ANALYSIS")
     compress_running_logs()
-    compress_history_direct()
+    compress_all_history()
 
     print("\n🔹 GAIN SELECTION")
     compress_gain_logs()
