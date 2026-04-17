@@ -1,40 +1,41 @@
 import pathlib
 import tarfile
-import os
-
-SIMULATION = True  # 🔴 cambiar a False cuando estés seguro
-
-REALN = os.environ.get("realn")  # usa tu variable de entorno
+import argparse
+import configparser
 
 
 # =========================
-# 1. ELEGIR DÍA (POR NOMBRE)
+# LEER CONFIG
+# ========================
+
+def load_config(cfg_path):
+    cfg_path = pathlib.Path(cfg_path)
+
+    if not cfg_path.exists():
+        raise FileNotFoundError(f"  Config file not found: {cfg_path}")
+
+    config = configparser.ConfigParser(delimiters=(":", "="))
+    config.optionxform = str
+
+    config.read(cfg_path)
+
+    if "LST1" not in config:
+        print("DEBUG sections:", config.sections())
+        raise ValueError("  No se encontró la sección [LST1] en el cfg")
+
+    base = config["LST1"]["BASE"].strip()
+
+    running_analysis = pathlib.Path(base) / "running_analysis"
+    gainsel = pathlib.Path(base) / "OSA" / "GainSel_log"
+
+    return running_analysis, gainsel
+
 # =========================
-def choose_day():
-    base = pathlib.Path(REALN) / "running_analysis"
-
-    days = sorted([d.name for d in base.iterdir() if d.is_dir()])
-
-    print("\nAvailable days:")
-    print("-" * 40)
-    for d in days:
-        print(d)
-    print("-" * 40)
-
-    selected_day = input("Write the day (e.g. 20250702): ").strip()
-
-    if selected_day not in days:
-        print("❌ Invalid day")
-        return None
-
-    return base / selected_day
-
-
-# =========================
-# 2. ENCONTRAR v0.11*
+# ENCONTRAR v0.11*
 # =========================
 def find_version_folder(day_path):
-    versions = [d for d in day_path.iterdir() if d.is_dir() and d.name.startswith("v0.11")]
+    versions = [d for d in day_path.iterdir()
+                if d.is_dir() and d.name.startswith("v0.11")]
 
     if not versions:
         print("❌ No v0.11* directory found")
@@ -44,9 +45,9 @@ def find_version_folder(day_path):
 
 
 # =========================
-# 3. COMPRIMIR LOGS
+# COMPRIMIR LOGS
 # =========================
-def compress_logs(base_path):
+def compress_logs(base_path, simulate):
     log_path = base_path / "log"
 
     if not log_path.exists():
@@ -64,7 +65,7 @@ def compress_logs(base_path):
 
     if err_files:
         print(f"[COMPRESS] err → {err_tar.name}")
-        if not SIMULATION:
+        if not simulate:
             with tarfile.open(err_tar, "w:gz") as tar:
                 for f in err_files:
                     tar.add(f, arcname=f.name)
@@ -73,7 +74,7 @@ def compress_logs(base_path):
 
     if out_files:
         print(f"[COMPRESS] out → {out_tar.name}")
-        if not SIMULATION:
+        if not simulate:
             with tarfile.open(out_tar, "w:gz") as tar:
                 for f in out_files:
                     tar.add(f, arcname=f.name)
@@ -82,9 +83,9 @@ def compress_logs(base_path):
 
 
 # =========================
-# 4. COMPRIMIR HISTORY
+# COMPRIMIR HISTORY
 # =========================
-def compress_history(base_path):
+def compress_history(base_path, simulate):
     files = list(base_path.glob("*.history"))
     tar_name = base_path / "all_history.tar.gz"
 
@@ -95,7 +96,7 @@ def compress_history(base_path):
 
     print(f"[COMPRESS] history → {tar_name.name}")
 
-    if not SIMULATION:
+    if not simulate:
         with tarfile.open(tar_name, "w:gz") as tar:
             for f in files:
                 tar.add(f, arcname=f.name)
@@ -105,11 +106,9 @@ def compress_history(base_path):
 
 
 # =========================
-# 5. GAINSEL
+# GAINSEL
 # =========================
-def compress_gainsel():
-    path = pathlib.Path(REALN) / "OSA" / "GainSel_log"
-
+def compress_gainsel(path, simulate):
     if not path.exists():
         print("[GAINSEL] Path not found")
         return
@@ -125,7 +124,7 @@ def compress_gainsel():
 
     if check_logs:
         print(f"[COMPRESS] check → {check_tar.name}")
-        if not SIMULATION:
+        if not simulate:
             with tarfile.open(check_tar, "w:gz") as tar:
                 for f in check_logs:
                     tar.add(f, arcname=f.name)
@@ -134,7 +133,7 @@ def compress_gainsel():
 
     if normal_logs:
         print(f"[COMPRESS] normal → {normal_tar.name}")
-        if not SIMULATION:
+        if not simulate:
             with tarfile.open(normal_tar, "w:gz") as tar:
                 for f in normal_logs:
                     tar.add(f, arcname=f.name)
@@ -146,26 +145,45 @@ def compress_gainsel():
 # MAIN
 # =========================
 def main():
-    print(f"Mode: {'SIMULATION' if SIMULATION else 'REAL'}")
+    parser = argparse.ArgumentParser(description="Compression tool (sequencer-style)")
+
+    parser.add_argument("-c", "--config", required=True,
+                        help="Path to config file (e.g. sequencer_v0.11.cfg)")
+
+    parser.add_argument("-d", "--date", required=True,
+                        help="Date to process (YYYYMMDD)")
+
+    parser.add_argument("-s", "--simulate", action="store_true",
+                        help="Simulation mode (no changes)")
+
+    args = parser.parse_args()
+
+    print(f"Mode: {'SIMULATION' if args.simulate else 'REAL'}")
     print("=" * 60)
 
-    day_path = choose_day()
+    # Leer config
+    running_path, gainsel_path = load_config(args.config)
 
-    if day_path is None:
+    # Día
+    day_path = running_path / args.date
+
+    if not day_path.exists():
+        print(f"❌ Day not found: {args.date}")
         return
 
-    print(f"\nSelected: {day_path}")
+    print(f"Selected: {day_path}")
 
+    # Versión
     version_path = find_version_folder(day_path)
 
     if version_path:
         print(f"Using version: {version_path.name}")
 
-        compress_logs(version_path)
-        compress_history(version_path)
+        compress_logs(version_path, args.simulate)
+        compress_history(version_path, args.simulate)
 
     print("\n🔹 Gain Selection")
-    compress_gainsel()
+    compress_gainsel(gainsel_path, args.simulate)
 
     print("\nDone.")
 
