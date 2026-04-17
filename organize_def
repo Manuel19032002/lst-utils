@@ -6,13 +6,12 @@ import configparser
 
 # =========================
 # LEER CONFIG
-# ========================
-
+# =========================
 def load_config(cfg_path):
     cfg_path = pathlib.Path(cfg_path)
 
     if not cfg_path.exists():
-        raise FileNotFoundError(f"  Config file not found: {cfg_path}")
+        raise FileNotFoundError(f"Config file not found: {cfg_path}")
 
     config = configparser.ConfigParser(delimiters=(":", "="))
     config.optionxform = str
@@ -21,7 +20,7 @@ def load_config(cfg_path):
 
     if "LST1" not in config:
         print("DEBUG sections:", config.sections())
-        raise ValueError("  No se encontró la sección [LST1] en el cfg")
+        raise ValueError("No se encontró la sección [LST1] en el cfg")
 
     base = config["LST1"]["BASE"].strip()
 
@@ -29,6 +28,7 @@ def load_config(cfg_path):
     gainsel = pathlib.Path(base) / "OSA" / "GainSel_log"
 
     return running_analysis, gainsel
+
 
 # =========================
 # ENCONTRAR v0.11*
@@ -148,13 +148,16 @@ def main():
     parser = argparse.ArgumentParser(description="Compression tool (sequencer-style)")
 
     parser.add_argument("-c", "--config", required=True,
-                        help="Path to config file (e.g. sequencer_v0.11.cfg)")
+                        help="Path to config file")
 
     parser.add_argument("-d", "--date", required=True,
                         help="Date to process (YYYYMMDD)")
 
     parser.add_argument("-s", "--simulate", action="store_true",
                         help="Simulation mode (no changes)")
+
+    parser.add_argument("--no-gainsel", action="store_true",
+                        help="Skip Gain Selection compression")
 
     args = parser.parse_args()
 
@@ -182,8 +185,12 @@ def main():
         compress_logs(version_path, args.simulate)
         compress_history(version_path, args.simulate)
 
-    print("\n🔹 Gain Selection")
-    compress_gainsel(gainsel_path, args.simulate)
+    # GainSel opcional
+    if args.no_gainsel:
+        print("\n🔹 Gain Selection SKIPPED")
+    else:
+        print("\n🔹 Gain Selection")
+        compress_gainsel(gainsel_path, args.simulate)
 
     print("\nDone.")
 
