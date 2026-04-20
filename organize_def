@@ -2,7 +2,28 @@ import pathlib
 import tarfile
 import argparse
 import configparser
+
+
 # ejemplo: python3 organize_def -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel
+
+
+def clean_path(raw_path, base):
+    """
+    Limpia rutas del cfg:
+    - Si contiene %(BASE)s → lo sustituye manualmente
+    - Si hay basura antes del primer / → la elimina
+    """
+    raw_path = raw_path.strip()
+
+    # Sustituir %(BASE)s manualmente
+    if "%(BASE)s" in raw_path:
+        raw_path = raw_path.replace("%(BASE)s", base)
+
+    # Quedarse desde el primer /
+    if "/" in raw_path:
+        raw_path = raw_path[raw_path.find("/"):]
+    
+    return pathlib.Path(raw_path)
 
 # =========================
 # LEER CONFIG
@@ -22,10 +43,20 @@ def load_config(cfg_path):
         print("DEBUG sections:", config.sections())
         raise ValueError("No se encontró la sección [LST1] en el cfg")
 
-    base = config["LST1"]["BASE"].strip()
+    section = config["LST1"]
 
-    running_analysis = pathlib.Path(base) / "running_analysis"
-    gainsel = pathlib.Path(base) / "OSA" / "GainSel_log"
+    # BASE limpio
+    base = section.get("BASE").strip()
+
+    # Leer directamente del cfg
+    analysis_raw = section.get("ANALYSIS_DIR")
+    osa_raw = section.get("OSA_DIR")
+
+    # Limpiar rutas (aquí está la clave)
+    running_analysis = clean_path(analysis_raw, base)
+    osa_dir = clean_path(osa_raw, base)
+
+    gainsel = osa_dir / "GainSel_log"
 
     return running_analysis, gainsel
 
