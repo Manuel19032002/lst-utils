@@ -8,7 +8,7 @@ import datetime
 
 
 
-# ejemplo: python3 organize_def -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel
+# ejemplo con todas las opciones: python3 organize_def -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel --no-running
 
 
 def clean_path(raw_path, base):
@@ -175,10 +175,6 @@ def compress_gainsel(path, simulate):
             for f in normal_logs:
                 f.unlink()
 
-
-# =========================
-# MAIN
-# =========================
 def main():
     parser = argparse.ArgumentParser(description="Compression tool (sequencer-style)")
 
@@ -194,37 +190,48 @@ def main():
     parser.add_argument("--no-gainsel", action="store_true",
                         help="Skip Gain Selection compression")
 
+    parser.add_argument("--no-running", action="store_true",
+                        help="Skip Running Analysis compression")
+
     args = parser.parse_args()
+
+    # Fecha por defecto
     if args.date is None:
         yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
         args.date = yesterday.strftime("%Y%m%d")
         print(f"No date provided → using yesterday: {args.date}")
-    
+
     print(f"Mode: {'SIMULATION' if args.simulate else 'REAL'}")
     print("=" * 60)
 
     # Leer config
     running_path, gainsel_path = load_config(args.config)
 
-    # Día
-    day_path = running_path / args.date
+    # =========================
+    # RUNNING ANALYSIS
+    # =========================
+    if args.no_running:
+        print("\n🔹 Running Analysis SKIPPED")
+    else:
+        day_path = running_path / args.date
 
-    if not day_path.exists():
-        print(f"❌ Day not found: {args.date}")
-        return
+        if not day_path.exists():
+            print(f"❌ Day not found: {args.date}")
+        else:
+            print(f"\n🔹 Running Analysis")
+            print(f"Selected: {day_path}")
 
-    print(f"Selected: {day_path}")
+            version_path = find_version_folder(day_path)
 
-    # Versión
-    version_path = find_version_folder(day_path)
+            if version_path:
+                print(f"Using version: {version_path.name}")
 
-    if version_path:
-        print(f"Using version: {version_path.name}")
+                compress_logs(version_path, args.simulate)
+                compress_history(version_path, args.simulate)
 
-        compress_logs(version_path, args.simulate)
-        compress_history(version_path, args.simulate)
-
-    # GainSel opcional
+    # =========================
+    # GAIN SELECTION
+    # =========================
     if args.no_gainsel:
         print("\n🔹 Gain Selection SKIPPED")
     else:
