@@ -2,6 +2,10 @@ import pathlib
 import tarfile
 import argparse
 import configparser
+import datetime
+
+
+
 
 
 # ejemplo: python3 organize_def -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel
@@ -181,8 +185,8 @@ def main():
     parser.add_argument("-c", "--config", required=True,
                         help="Path to config file")
 
-    parser.add_argument("-d", "--date", required=True,
-                        help="Date to process (YYYYMMDD)")
+    parser.add_argument("-d", "--date",
+                        help="Date to process (YYYYMMDD), default = yesterday")
 
     parser.add_argument("-s", "--simulate", action="store_true",
                         help="Simulation mode (no changes)")
@@ -191,7 +195,11 @@ def main():
                         help="Skip Gain Selection compression")
 
     args = parser.parse_args()
-
+    if args.date is None:
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        args.date = yesterday.strftime("%Y%m%d")
+        print(f"No date provided → using yesterday: {args.date}")
+    
     print(f"Mode: {'SIMULATION' if args.simulate else 'REAL'}")
     print("=" * 60)
 
