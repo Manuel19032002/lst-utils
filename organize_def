@@ -2,7 +2,7 @@ import pathlib
 import tarfile
 import argparse
 import configparser
-
+# ejemplo: python3 organize_def -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel
 
 # =========================
 # LEER CONFIG
