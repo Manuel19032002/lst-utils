@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# -------------------------
+# Load environment
+# -------------------------
+source /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/osa-env.sh
+
+# Convert YYYY-MM-DD → YYYYMMDD
+obsdate=$(date -d "$OBS_DATE" +%Y%m%d)
+
+# -------------------------
+# Helpers
+# -------------------------
+exists() {
+    compgen -G "$1" > /dev/null
+}
+
+# -------------------------
+# Check NightFinished.txt
+# -------------------------
+if ! exists "${LSTN1}/OSA/Closer/${obsdate}/v*/NightFinished.txt" ; then
+    exit
+fi
+
+
+
+# -------------------------
+# DONE FILE (STOP FUTURE RUNS)
+# -------------------------
+DONE_FILE="${LSTN1}/OSA/Organize/${obsdate}/DONE.txt"
+
+if [ -f "$DONE_FILE" ]; then
+    exit
+fi
+
+
+
+
+
+
+# -------------------------
+# Detect simulation mode (-s)
+# -------------------------
+SIMULATION=false
+
+for arg in "$@"; do
+    if [ "$arg" = "-s" ]; then
+        SIMULATION=true
+    fi
+done
+
+# -------------------------
+# Environment
+# -------------------------
+source "$CONDA_ENV"
+
+# -------------------------
+# Run Python script
+# -------------------------
+python /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/rutas_organize_def.py \
+    -c "$CFG" \
+    -d "$obsdate" \
+    "$@"
+
+# -------------------------
+# Mark as done (ONLY if not simulation)
+# -------------------------
+DONE_FILE="${LSTN1}/OSA/Organize/${obsdate}/DONE.txt"
+
+
+if [ "$SIMULATION" = false ]; then
+    mkdir -p "$(dirname "$DONE_FILE")"
+    touch "$DONE_FILE"
+fi
