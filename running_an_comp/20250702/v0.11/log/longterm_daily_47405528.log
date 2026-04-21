@@ -1,0 +1,7 @@
+/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/ctaplot/io/dataset.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Processing 5 datacheck files...
+Writing out:
+     /fefs/onsite/data/lst-pipe/LSTN-01/OSA/DL1DataCheck_LongTerm/v0.11/20250702/DL1_datacheck_20250702.log
+     /fefs/onsite/data/lst-pipe/LSTN-01/OSA/DL1DataCheck_LongTerm/v0.11/20250702/DL1_datacheck_20250702.h5
+     /fefs/onsite/data/lst-pipe/LSTN-01/OSA/DL1DataCheck_LongTerm/v0.11/20250702/DL1_datacheck_20250702.html

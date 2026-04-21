@@ -1,0 +1,4 @@
+/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/ctaplot/io/dataset.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:02<00:08,  2.00s/it] 40%|████      | 2/5 [00:03<00:04,  1.65s/it] 60%|██████    | 3/5 [00:04<00:03,  1.56s/it] 80%|████████  | 4/5 [00:06<00:01,  1.47s/it]100%|██████████| 5/5 [00:06<00:00,  1.12s/it]100%|██████████| 5/5 [00:06<00:00,  1.34s/it]
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:00<00:01,  3.80it/s] 60%|██████    | 3/5 [00:00<00:00,  7.27it/s]100%|██████████| 5/5 [00:00<00:00, 10.18it/s]100%|██████████| 5/5 [00:00<00:00,  8.71it/s]

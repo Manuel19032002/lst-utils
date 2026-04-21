@@ -1,0 +1,91 @@
+/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/provenance/capture.py:14: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+copying /fefs/onsite/data/lst-pipe/LSTN-01/DL1/20250702/v0.11/tailcut1005/log/sequencer_v0.11.cfg
+copying /fefs/onsite/data/lst-pipe/LSTN-01/DL1/20250702/v0.11/tailcut1005/log/drs4_pedestal.Run20993.0000.h5
+copying /fefs/onsite/data/lst-pipe/LSTN-01/DL2/20250702/v0.11/tailcut1005/nsb_tuning_0.38/log/sequencer_v0.11.cfg
+creating /fefs/onsite/data/lst-pipe/LSTN-01/DL1/20250702/v0.11/tailcut1005/log/calibration_to_dl1_20991_prov.log
+2025-07-30 09:09:03,154 ERROR [root] (provprocess.produce_provenance_files): problem while creating json: No module named 'lxml'
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/scripts/provprocess.py", line 369, in produce_provenance_files
+    provdoc2json(provdoc, str(paths["json_filepath"]))
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/provenance/io.py", line 205, in provdoc2json
+    json_stream = provdoc.serialize(indent=4)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/model.py", line 2727, in serialize
+    serializer = serializers.get(format)(self)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/__init__.py", line 83, in get
+    Registry.load_serializers()
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/__init__.py", line 66, in load_serializers
+    from prov.serializers.provxml import ProvXMLSerializer
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/provxml.py", line 4, in <module>
+    from lxml import etree
+ModuleNotFoundError: No module named 'lxml'
+2025-07-30 09:09:03,188 ERROR [root] (provprocess.produce_provenance_files): problem while creating graph: [Errno 2] "dot" not found in path.
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 1824, in create
+    stdout_data, stderr_data, process = call_graphviz(
+                                        ^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 249, in call_graphviz
+    process = subprocess.Popen(
+              ^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'dot'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/scripts/provprocess.py", line 375, in produce_provenance_files
+    provdoc2graph(provdoc, str(paths["graph_filepath"]), "pdf")
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/provenance/io.py", line 199, in provdoc2graph
+    content = dot.create(format=fmt)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 1833, in create
+    raise OSError(*args)
+FileNotFoundError: [Errno 2] "dot" not found in path.
+creating /fefs/onsite/data/lst-pipe/LSTN-01/DL2/20250702/v0.11/tailcut1005/nsb_tuning_0.38/log/calibration_to_dl2_20991_prov.log
+2025-07-30 09:09:03,586 ERROR [root] (provprocess.produce_provenance_files): problem while creating json: No module named 'lxml'
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/scripts/provprocess.py", line 369, in produce_provenance_files
+    provdoc2json(provdoc, str(paths["json_filepath"]))
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/provenance/io.py", line 205, in provdoc2json
+    json_stream = provdoc.serialize(indent=4)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/model.py", line 2727, in serialize
+    serializer = serializers.get(format)(self)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/__init__.py", line 83, in get
+    Registry.load_serializers()
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/__init__.py", line 66, in load_serializers
+    from prov.serializers.provxml import ProvXMLSerializer
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/prov/serializers/provxml.py", line 4, in <module>
+    from lxml import etree
+ModuleNotFoundError: No module named 'lxml'
+2025-07-30 09:09:03,605 ERROR [root] (provprocess.produce_provenance_files): problem while creating graph: [Errno 2] "dot" not found in path.
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 1824, in create
+    stdout_data, stderr_data, process = call_graphviz(
+                                        ^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 249, in call_graphviz
+    process = subprocess.Popen(
+              ^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'dot'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/scripts/provprocess.py", line 375, in produce_provenance_files
+    provdoc2graph(provdoc, str(paths["graph_filepath"]), "pdf")
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/osa/provenance/io.py", line 199, in provdoc2graph
+    content = dot.create(format=fmt)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/fefs/aswg/software/conda/envs/osa-v0.11.3/lib/python3.11/site-packages/pydot/core.py", line 1833, in create
+    raise OSError(*args)
+FileNotFoundError: [Errno 2] "dot" not found in path.

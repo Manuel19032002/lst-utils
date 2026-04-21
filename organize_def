@@ -2,7 +2,7 @@ import pathlib
 import tarfile
 import os
 
-SIMULATION = True  # 🔴 cambiar a False cuando estés seguro
+SIMULATION = False  # 🔴 cambiar a False cuando estés seguro
 
 REALN = os.environ.get("realn")  # usa tu variable de entorno
 
