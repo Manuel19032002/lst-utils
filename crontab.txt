@@ -1,3 +1,5 @@
 SHELL=/usr/bin/bash
-0 10 * * * sbatch /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/organize.slurm
+
+
+* * * * * /usr/bin/sbatch /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/organize.slurm >> /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/cron_sbatch.log 2>&1
 
