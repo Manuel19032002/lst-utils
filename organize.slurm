@@ -6,6 +6,6 @@
 
 source /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/osa-env.sh
 
-OBS_DATE=$(date -d "yesterday" +%Y-%m-%d)
+
 
 /usr/bin/bash /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/launch_organize.sh -s --no-gainsel --no-running
