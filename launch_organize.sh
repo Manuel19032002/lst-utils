@@ -8,6 +8,13 @@
 # -------------------------
 source /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/osa-env.sh
 
+
+# If OBS_DATE not set, use yesterday
+if [ -z "$OBS_DATE" ]; then
+    OBS_DATE=$(date -d "yesterday" +%Y-%m-%d)
+fi
+
+
 # Convert YYYY-MM-DD → YYYYMMDD
 obsdate=$(date -d "$OBS_DATE" +%Y%m%d)
 
