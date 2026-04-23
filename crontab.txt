@@ -1,5 +1,5 @@
 SHELL=/usr/bin/bash
 
 
-* * * * * /usr/bin/sbatch /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/organize.slurm >> /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/cron_sbatch.log 2>&1
+* * * * * /usr/bin/sbatch /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/organizeslurm.sh >> /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/cron_sbatch.log 2>&1
 
