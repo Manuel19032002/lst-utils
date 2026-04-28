@@ -8,7 +8,8 @@ import datetime
 
 
 
-# ejemplo con todas las opciones: python3 organize_def.py -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel --no-running
+# ejemplo con todas las opciones: python3 organize_def.py -c /fefs/aswg/lstosa/cfg/sequencer_v0.11.cfg/ -d 20250621 -s --no-gainsel --no-running  
+# (si no pones el dia usa el de ayer)
 
 
 def clean_path(raw_path, base):
