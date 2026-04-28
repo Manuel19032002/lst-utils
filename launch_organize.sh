@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# ejemplo: OBS_DATE=2026-03-10 ./launch_organize.sh -s --no-gainsel --no-running
+# ejemplo: OBS_DATE=2026-03-10 ./launch_organize.sh -s --no-gainsel --no-running (si no pones el dia usa el de ayer)
 
 # -------------------------
 # Load environment
