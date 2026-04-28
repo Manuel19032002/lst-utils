@@ -3,8 +3,6 @@
 #SBATCH --time=02:00:00
 #SBATCH --output=slurm-%j.out
 #SBATCH --error=slurm-%j.err
-#SBATCH --account=osa
-#SBATCH --partition=short
 
 
 source /fefs/aswg/workspace/manuel.martinezherresanchez/limpieza/lst-utils/osa-env.sh
