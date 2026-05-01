@@ -66,7 +66,7 @@ def load_config(cfg_path):
 # =========================
 def find_version_folder(day_path):
     versions = [d for d in day_path.iterdir()
-                if d.is_dir() and d.name.startswith("v0.11")]
+                if d.is_dir() and d.name.startswith("v")]
 
     if not versions:
         print("❌ No v0.11* directory found")
